@@ -260,14 +260,15 @@
       <pre class="resultado" id="out-dns"></pre>
     </div>
 
-    <!-- 05 - WHOIS -->
-    <div class="caixa">
-      <h3><span class="num">[05]</span>WHOIS <span class="badge-edu">EDUCATIVO</span></h3>
-      <div class="texto-edu">
-        <p>WHOIS é um protocolo público usado para consultar quem registrou um domínio, data de criação/expiração e servidores de nome (DNS) responsáveis por ele.</p>
-        <p>Para consultar de verdade, use um site confiável como <em>whois.iana.org</em> ou o painel do próprio registrador do domínio. Esse tipo de consulta não requer nenhuma técnica de invasão — é informação pública.</p>
-      </div>
-    </div>
+<!-- 05 - Consulta CNPJ -->
+<div class="caixa">
+  <h3><span class="num">[05]</span>Consulta CNPJ</h3>
+  <p class="texto-edu">Consulta dados públicos de empresas brasileiras (Receita Federal): razão social, situação cadastral, endereço, etc. CNPJ é informação pública — diferente do CPF, que é dado pessoal protegido.</p>
+  <label>CNPJ (só números, ex: 00000000000191)</label>
+  <input type="text" id="cnpj-alvo" placeholder="00000000000191">
+  <button onclick="consultarCnpj()">CONSULTAR</button>
+  <pre class="resultado" id="out-cnpj"></pre>
+</div>
 
     <!-- 06 - Nmap -->
     <div class="caixa">
