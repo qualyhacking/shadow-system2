@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SHADOW SYSTEM</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #050505;
+    color: #00ff66;
+    font-family: monospace;
+}
+
+button,
+input {
+    font-family: monospace;
+}
+
+.screen {
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* LOGIN */
+
+.login-box {
+    max-width: 430px;
+    margin: 10vh auto;
+    border: 1px solid #00ff66;
+    padding: 25px;
+    box-shadow: 0 0 25px rgba(0,255,102,.15);
+}
+
+.logo {
+    text-align: center;
+    white-space: pre;
+    font-size: 10px;
+    overflow-x: auto;
+    margin-bottom: 25px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #aaa;
+    margin-bottom: 25px;
+}
+
+input {
+    width: 100%;
+    padding: 13px;
+    margin: 7px 0;
+    background: #0b0b0b;
+    color: #00ff66;
+    border: 1px solid #333;
+    outline: none;
+}
+
+input:focus {
+    border-color: #00ff66;
+}
+
+button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 10px;
+    background: #071207;
+    color: #00ff66;
+    border: 1px solid #00ff66;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #00ff66;
+    color: #000;
+}
+
+.error {
+    color: #ff3333;
+    margin-top: 15px;
+    text-align: center;
+}
+
+/* PAINEL */
+
+.header {
+    border-bottom: 1px solid #00ff66;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.status {
+    color: #777;
+}
+
+.menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.card {
+    border: 1px solid #222;
+    padding: 18px;
+    background: #080808;
+}
+
+.card h3 {
+    margin-top: 0;
+}
+
+.card p {
+    color: #888;
+    min-height: 40px;
+}
+
+.output {
+    margin-top: 20px;
+    border: 1px solid #222;
+    padding: 20px;
+    background: #030303;
+    color: #ddd;
+    white-space: pre-wrap;
+    min-height: 100px;
+}
+
+.green {
+    color: #00ff66;
+}
+
+.red {
+    color: #ff3333;
+}
+
+.blue {
+    color: #3399ff;
+}
+
+.yellow {
+    color: #ffff33;
+}
+
+.logout {
+    max-width: 180px;
+    margin-top: 25px;
+}
+
+@media(max-width:600px) {
+    .screen {
+        padding: 12px;
+    }
+
+    .logo {
+        font-size: 6px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="screen">
+
+<!-- LOGIN -->
+
+<section id="loginScreen">
+
+<div class="login-box">
+
+<div class="logo">
+███████╗██╗  ██╗ █████╗ ██████╗
+██╔════╝██║  ██║██╔══██╗██╔══██╗
+███████╗███████║███████║██████╔╝
+╚════██║██╔══██║██╔══██║██╔═══╝
+███████║██║  ██║██║  ██║██║
+╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝
+</div>
+
+<div class="subtitle">
+SHADOW SYSTEM - LOGIN
+</div>
+
+<input id="usuario" type="text" placeholder="Usuário">
+
+<input id="senha" type="password" placeholder="Senha">
+
+<button onclick="entrar()">
+[ ENTRAR ]
+</button>
+
+<div id="loginErro" class="error"></div>
+
+</div>
+
+</section>
+
+
+<!-- PAINEL -->
+
+<section id="panelScreen" class="hidden">
+
+<div class="header">
+
+<h1>SHADOW SYSTEM</h1>
+
+<div class="status">
+STATUS: <span class="green">ONLINE</span>
+</div>
+
+</div>
+
+
+<div class="menu">
+
+
+<!-- GERADOR -->
+
+<div class="card">
+
+<h3>[01] GERADOR</h3>
+
+<p>
+Gera endereço de e-mail fictício e senha aleatória.
+</p>
+
+<button onclick="gerarEmail()">
+GERAR
+</button>
+
+</div>
+
+
+<!-- CALCULADORA -->
+
+<div class="card">
+
+<h3>[02] CALCULADORA</h3>
+
+<p>
+Calculadora para expressões matemáticas.
+</p>
+
+<input id="expressao" placeholder="Ex: 10 * 5 + 2">
+
+<button onclick="calcular()">
+CALCULAR
+</button>
+
+</div>
+
+
+<!-- HEADERS -->
+
+<div class="card">
+
+<h3>[03] HEADERS</h3>
+
+<p>
+Verifica alguns headers HTTP de um site informado.
+</p>
+
+<input id="url" placeholder="https://exemplo.com">
+
+<button onclick="verificarHeaders()">
+VERIFICAR
+</button>
+
+</div>
+
+
+<!-- DNS -->
+
+<div class="card">
+
+<h3>[04] DNS / IP</h3>
+
+<p>
+Consulta DNS reverso através do servidor.
+</p>
+
+<input id="dominio" placeholder="exemplo.com">
+
+<button onclick="consultarDNS()">
+CONSULTAR
+</button>
+
+</div>
+
+
+<!-- WHOIS -->
+
+<div class="card">
+
+<h3>[05] WHOIS</h3>
+
+<p>
+Área reservada para consulta de informações de domínio.
+</p>
+
+<button onclick="mostrarWhois()">
+ABRIR
+</button>
+
+</div>
+
+
+<!-- NMAP -->
+
+<div class="card">
+
+<h3>[06] NMAP</h3>
+
+<p>
+Modo educativo. O navegador não executa Nmap diretamente.
+</p>
+
+<button onclick="mostrarNmap()">
+ABRIR
+</button>
+
+</div>
+
+
+<!-- REDE -->
+
+<div class="card">
+
+<h3>[07] REDE LOCAL</h3>
+
+<p>
+Informações sobre dispositivos e rede local.
+</p>
+
+<button onclick="mostrarRede()">
+ABRIR
+</button>
+
+</div>
+
+
+<!-- TOR -->
+
+<div class="card">
+
+<h3>[08] TOR</h3>
+
+<p>
+Informações educativas sobre Tor e privacidade.
+</p>
+
+<button onclick="mostrarTor()">
+ABRIR
+</button>
+
+</div>
+
+
+<!-- DEEP WEB -->
+
+<div class="card">
+
+<h3>[09] DEEP WEB</h3>
+
+<p>
+História, funcionamento e segurança.
+</p>
+
+<button onclick="mostrarDeepWeb()">
+ABRIR
+</button>
+
+</div>
+
+
+<!-- INSTAGRAM -->
+
+<div class="card">
+
+<h3>[10] INSTAGRAM</h3>
+
+<p>
+Demonstração educativa sobre autenticação e brute force.
+</p>
+
+<button onclick="mostrarInstagram()">
+ABRIR
+</button>
+
+</div>
+
+
+<!-- WHATSAPP -->
+
+<div class="card">
+
+<h3>[11] WHATSAPP</h3>
+
+<p>
+Conteúdo educativo sobre segurança de códigos de verificação.
+</p>
+
+<button onclick="mostrarWhatsApp()">
+ABRIR
+</button>
+
+</div>
+
+
+<!-- SEGURANÇA -->
+
+<div class="card">
+
+<h3>[12] TESTES DE SEGURANÇA</h3>
+
+<p>
+Ferramentas para testes autorizados.
+</p>
+
+<button onclick="mostrarSeguranca()">
+ABRIR
+</button>
+
+</div>
+
+
+</div>
+
+
+<div id="output" class="output">
+SHADOW SYSTEM aguardando comando...
+</div>
+
+
+<button class="logout" onclick="sair()">
+[ SAIR ]
+</button>
+
+</section>
+
+</div>
+
+
+<script>
+
+function entrar() {
+
+    const usuario =
+        document.getElementById("usuario").value;
+
+    const senha =
+        document.getElementById("senha").value;
+
+    /*
+       O login real é validado pelo Flask.
+       Esta função apenas envia os dados para o servidor.
+    */
+
+    const form = document.createElement("form");
+
+    form.method = "POST";
+    form.action = "/";
+
+    const userInput = document.createElement("input");
+    userInput.name = "usuario";
+    userInput.value = usuario;
+
+    const passInput = document.createElement("input");
+    passInput.name = "senha";
+    passInput.value = senha;
+
+    form.appendChild(userInput);
+    form.appendChild(passInput);
+
+    document.body.appendChild(form);
+
+    form.submit();
+}
+
+
+function gerarEmail() {
+
+    const letras =
+        "abcdefghijklmnopqrstuvwxyz";
+
+    let nome = "";
+
+    for(let i = 0; i < 7; i++) {
+
+        nome += letras[
+            Math.floor(Math.random() * letras.length)
+        ];
+
+    }
+
+    let numero =
+        Math.floor(100 + Math.random() * 900);
+
+    const dominios = [
+        "@gmail.com",
+        "@outlook.com",
+        "@yahoo.com",
+        "@protonmail.com"
+    ];
+
+    const dominio =
+        dominios[
+            Math.floor(Math.random() * dominios.length)
+        ];
+
+    const caracteres =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*";
+
+    let senha = "";
+
+    for(let i = 0; i < 12; i++) {
+
+        senha += caracteres[
+            Math.floor(Math.random() * caracteres.length)
+        ];
+
+    }
+
+    mostrar(
+        "GERADOR\n\n" +
+        "EMAIL FICTÍCIO:\n" +
+        nome + numero + dominio +
+        "\n\nSENHA:\n" +
+        senha
+    );
+}
+
+
+function calcular() {
+
+    const expressao =
+        document.getElementById("expressao").value;
+
+    try {
+
+        /*
+         * Permitimos somente caracteres matemáticos básicos.
+         */
+
+        if(!/^[0-9+\-*/().% ]+$/.test(expressao)) {
+
+            throw new Error(
+                "Use somente números e operadores matemáticos."
+            );
+
+        }
+
+        const resultado =
+            Function(
+                '"use strict"; return (' +
+                expressao +
+                ')'
+            )();
+
+        mostrar(
+            "CALCULADORA\n\n" +
+            expressao +
+            " = " +
+            resultado
+        );
+
+    } catch(e) {
+
+        mostrar(
+            "ERRO:\n" + e.message,
+            true
+        );
+
+    }
+}
+
+
+async function verificarHeaders() {
+
+    const url =
+        document.getElementById("url").value;
+
+    if(!url) {
+
+        mostrar(
+            "Digite uma URL.",
+            true
+        );
+
+        return;
+    }
+
+    mostrar(
+        "Consultando headers...\nAguarde."
+    );
+
+    try {
+
+        const resposta =
+            await fetch(
+                "/api/headers?url=" +
+                encodeURIComponent(url)
+            );
+
+        const dados =
+            await resposta.json();
+
+        if(dados.error) {
+
+            mostrar(
+                "ERRO:\n" + dados.error,
+                true
+            );
+
+            return;
+        }
+
+        let texto =
+            "VERIFICAÇÃO DE HEADERS\n\n";
+
+        for(const item of dados.headers) {
+
+            if(item.present) {
+
+                texto +=
+                    "[+] PRESENTE: " +
+                    item.name +
+                    "\n";
+
+            } else {
+
+                texto +=
+                    "[-] AUSENTE: " +
+                    item.name +
+                    "\n";
+
+            }
+
+        }
+
+        texto +=
+            "\nSTATUS HTTP: " +
+            dados.status;
+
+        mostrar(texto);
+
+    } catch(e) {
+
+        mostrar(
+            "Não foi possível consultar o servidor.",
+            true
+        );
+
+    }
+}
+
+
+async function consultarDNS() {
+
+    const dominio =
+        document.getElementById("dominio").value;
+
+    if(!dominio) {
+
+        mostrar(
+            "Digite um domínio.",
+            true
+        );
+
+        return;
+    }
+
+    mostrar("Consultando DNS...");
+
+    try {
+
+        const resposta =
+            await fetch(
+                "/api/dns?domain=" +
+                encodeURIComponent(dominio)
+            );
+
+        const dados =
+            await resposta.json();
+
+        if(dados.error) {
+
+            mostrar(
+                "ERRO:\n" + dados.error,
+                true
+            );
+
+            return;
+        }
+
+        mostrar(
+            "RESOLUÇÃO DNS\n\n" +
+            "IP: " + dados.ip +
+            "\n" +
+            "DNS reverso: " +
+            dados.reverse
+        );
+
+    } catch(e) {
+
+        mostrar(
+            "Erro na consulta DNS.",
+            true
+        );
+
+    }
+}
+
+
+function mostrarWhois() {
+
+    mostrar(
+        "WHOIS\n\n" +
+        "A consulta WHOIS precisa ser executada " +
+        "por um serviço/servidor autorizado.\n\n" +
+        "O navegador não executa o comando " +
+        "'whois' diretamente."
+    );
+
+}
+
+
+function mostrarNmap() {
+
+    mostrar(
+        "NMAP\n\n" +
+        "O Nmap não pode ser executado diretamente " +
+        "pelo navegador.\n\n" +
+        "Para testes autorizados, ele deve ser " +
+        "executado em um ambiente controlado."
+    );
+
+}
+
+
+function mostrarRede() {
+
+    mostrar(
+        "REDE LOCAL\n\n" +
+        "Um site hospedado na internet não consegue " +
+        "varrer automaticamente a rede Wi-Fi do seu iPhone.\n\n" +
+        "Essa função precisa permanecer local."
+    );
+
+}
+
+
+function mostrarTor() {
+
+    mostrar(
+        "TOR\n\n" +
+        "Tor é uma rede de anonimização que encaminha " +
+        "o tráfego através de múltiplos relays.\n\n" +
+        "Este painel não controla o Tor do seu iPhone."
+    );
+
+}
+
+
+function mostrarDeepWeb() {
+
+    mostrar(
+        "DEEP WEB\n\n" +
+
+        "Deep Web é o conteúdo da internet que " +
+        "não é indexado pelos mecanismos de busca.\n\n" +
+
+        "A Dark Web é uma pequena parte dela " +
+        "acessível através de redes específicas.\n\n" +
+
+        "Use somente recursos legais e confiáveis."
+    );
+
+}
+
+
+function mostrarInstagram() {
+
+    mostrar(
+        "INSTAGRAM — MODO EDUCATIVO\n\n" +
+
+        "Brute force consiste em tentar repetidamente " +
+        "credenciais para obter acesso a uma conta.\n\n" +
+
+        "Este painel não executa tentativas contra " +
+        "contas do Instagram."
+    );
+
+}
+
+
+function mostrarWhatsApp() {
+
+    mostrar(
+        "WHATSAPP — MODO EDUCATIVO\n\n" +
+
+        "Códigos de verificação devem permanecer " +
+        "privados e nunca devem ser compartilhados.\n\n" +
+
+        "Este painel não solicita, captura ou testa " +
+        "códigos de autenticação."
+    );
+
+}
+
+
+function mostrarSeguranca() {
+
+    mostrar(
+        "TESTES DE SEGURANÇA\n\n" +
+
+        "[1] Headers HTTP\n" +
+        "[2] DNS / IP\n" +
+        "[3] Análise de configuração\n" +
+        "[4] Informações de rede\n\n" +
+
+        "Use somente em sistemas que você possui " +
+        "ou tem autorização para testar."
+    );
+
+}
+
+
+function mostrar(texto, erro = false) {
+
+    const output =
+        document.getElementById("output");
+
+    output.className =
+        erro ?
+        "output red" :
+        "output";
+
+    output.textContent = texto;
+
+}
+
+
+function sair() {
+
+    window.location.href = "/logout";
+
+}
+
+</script>
+
+</body>
+  </html>
