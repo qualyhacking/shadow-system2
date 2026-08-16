@@ -453,6 +453,35 @@ async function consultarDns() {
     out.textContent = "Erro: " + e.message;
   }
 }
+async function rastrearIp() {
+  const ip = document.getElementById("ip-alvo").value;
+  const out = document.getElementById("out-ip");
+  const mapaContainer = document.getElementById("mapa-container");
+  out.textContent = "Rastreando...";
+  mapaContainer.innerHTML = "";
+  try {
+    const dados = await postJSON("/api/ip-tracker", { ip });
+    out.textContent =
+      `IP: ${dados.ip}\n` +
+      `Cidade: ${dados.cidade}\n` +
+      `Região: ${dados.regiao}\n` +
+      `País: ${dados.pais}\n` +
+      `Provedor: ${dados.provedor}\n` +
+      `Coordenadas: ${dados.latitude}, ${dados.longitude}`;
+
+    const embedUrl = `https://maps.google.com/maps?q=${dados.latitude},${dados.longitude}&z=12&output=embed`;
+
+    mapaContainer.innerHTML = `
+      <div class="mapa-wrap">
+        <div class="mapa-label">[ MAPA — ALVO LOCALIZADO ]</div>
+        <iframe src="${embedUrl}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+      <a class="btn-maps" href="${dados.mapa_url}" target="_blank" rel="noopener">ABRIR EM TELA CHEIA ↗</a>
+    `;
+  } catch (e) {
+    out.textContent = "Erro: " + e.message;
+  }
+}
 </script>
 
 </body>
