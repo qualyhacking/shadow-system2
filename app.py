@@ -238,6 +238,39 @@ def api_ip_tracker():
         "mapa_url": f"https://www.google.com/maps?q={latitude},{longitude}",
     })
 
+# --- [05] Consulta CNPJ (dados públicos da Receita Federal via BrasilAPI) --
+
+@app.route("/api/cnpj", methods=["POST"])
+@login_required
+def api_cnpj():
+    dados = request.get_json(silent=True) or {}
+    cnpj = re.sub(r"\D", "", str(dados.get("cnpj", "")))
+
+    if len(cnpj) != 14:
+        return jsonify({"erro": "CNPJ deve ter 14 dígitos (só números)."}), 400
+
+    try:
+        resposta = requests.get(f"https://brasilapi.com.br/api/cnpj/v1/{cnpj}", timeout=8)
+    except requests.RequestException as exc:
+        return jsonify({"erro": f"Não foi possível consultar: {exc}"}), 400
+
+    if resposta.status_code != 200:
+        return jsonify({"erro": "CNPJ não encontrado ou inválido."}), 400
+
+    info = resposta.json()
+    endereco = f"{info.get('logradouro', '')}, {info.get('numero', '')} - {info.get('municipio', '')}/{info.get('uf', '')}"
+
+    return jsonify({
+        "razao_social": info.get("razao_social"),
+        "nome_fantasia": info.get("nome_fantasia") or "-",
+        "situacao": info.get("descricao_situacao_cadastral"),
+        "abertura": info.get("data_inicio_atividade"),
+        "atividade_principal": info.get("cnae_fiscal_descricao"),
+        "endereco": endereco,
+        "telefone": info.get("ddd_telefone_1") or "-",
+        "capital_social": info.get("capital_social"),
+    })
+
 if __name__ == "__main__":
     porta = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=porta, debug=False)
