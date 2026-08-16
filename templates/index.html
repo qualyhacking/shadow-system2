@@ -116,6 +116,52 @@
     opacity: .9;
   }
   .texto-edu ul { padding-left: 18px; }
+.mapa-wrap {
+  position: relative;
+  margin-top: 12px;
+  border: 1px solid var(--verde-escuro);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 0 12px #0f05, inset 0 0 20px #000a;
+}
+.mapa-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg, rgba(0,255,0,0.04) 0px, rgba(0,255,0,0.04) 1px,
+    transparent 1px, transparent 3px
+  );
+  z-index: 2;
+}
+.mapa-label {
+  background: #0f2a0f;
+  color: var(--verde-escuro);
+  font-size: 11px;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--borda);
+}
+.mapa-wrap iframe {
+  width: 100%;
+  height: 220px;
+  border: 0;
+  display: block;
+  filter: grayscale(35%) contrast(1.15) hue-rotate(60deg) brightness(.9);
+}
+.btn-maps {
+  display: inline-block;
+  margin-top: 10px;
+  text-decoration: none;
+  color: var(--verde);
+  border: 1px solid var(--borda);
+  padding: 8px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  background: #0f2a0f;
+}
+.btn-maps:hover { background: #1a4a1a; }
   .badge-edu {
     display: inline-block;
     font-size: 11px;
