@@ -483,6 +483,25 @@ async function rastrearIp() {
     out.textContent = "Erro: " + e.message;
   }
 }
+async function consultarCnpj() {
+  const cnpj = document.getElementById("cnpj-alvo").value;
+  const out = document.getElementById("out-cnpj");
+  out.textContent = "Consultando...";
+  try {
+    const dados = await postJSON("/api/cnpj", { cnpj });
+    out.textContent =
+      `Razão social: ${dados.razao_social}\n` +
+      `Nome fantasia: ${dados.nome_fantasia}\n` +
+      `Situação: ${dados.situacao}\n` +
+      `Abertura: ${dados.abertura}\n` +
+      `Atividade principal: ${dados.atividade_principal}\n` +
+      `Endereço: ${dados.endereco}\n` +
+      `Telefone: ${dados.telefone}\n` +
+      `Capital social: ${dados.capital_social}`;
+  } catch (e) {
+    out.textContent = "Erro: " + e.message;
+  }
+}
 </script>
 
 </body>
