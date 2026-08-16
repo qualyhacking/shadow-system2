@@ -205,6 +205,38 @@ def api_dns():
 
     return jsonify(resultado)
 
+# --- [13] Rastreador de IP (geolocalização aproximada via ipinfo.io) -------
+
+@app.route("/api/ip-tracker", methods=["POST"])
+@login_required
+def api_ip_tracker():
+    dados = request.get_json(silent=True) or {}
+    ip = str(dados.get("ip", "")).strip()
+
+    if not re.match(r"^[a-fA-F0-9.:]+$", ip):
+        return jsonify({"erro": "Informe um endereço IP válido."}), 400
+
+    try:
+        resposta = requests.get(f"https://ipinfo.io/{ip}/json", timeout=6)
+        info = resposta.json()
+    except (requests.RequestException, ValueError) as exc:
+        return jsonify({"erro": f"Não foi possível consultar esse IP: {exc}"}), 400
+
+    if "loc" not in info:
+        return jsonify({"erro": info.get("error", {}).get("message", "IP não encontrado ou sem dados de localização.")}), 400
+
+    latitude, longitude = info["loc"].split(",")
+
+    return jsonify({
+        "ip": info.get("ip"),
+        "cidade": info.get("city"),
+        "regiao": info.get("region"),
+        "pais": info.get("country"),
+        "latitude": latitude,
+        "longitude": longitude,
+        "provedor": info.get("org"),
+        "mapa_url": f"https://www.google.com/maps?q={latitude},{longitude}",
+    })
 
 if __name__ == "__main__":
     porta = int(os.environ.get("PORT", 5000))
