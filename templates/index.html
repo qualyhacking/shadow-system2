@@ -372,6 +372,17 @@ Existem alguns endereços e recursos conhecidos dentro desse ambiente. Para busc
       </div>
     </div>
 
+<!-- 13 - Rastreador de IP -->
+<div class="caixa">
+  <h3><span class="num">[13]</span>Rastreador de IP (geolocalização)</h3>
+  <p class="texto-edu">Mostra a localização aproximada (cidade/região) de um IP público, via serviço ipinfo.io. Não é uma localização exata em tempo real.</p>
+  <label>Endereço IP (ex: 8.8.8.8)</label>
+  <input type="text" id="ip-alvo" placeholder="8.8.8.8">
+  <button onclick="rastrearIp()">RASTREAR</button>
+  <pre class="resultado" id="out-ip"></pre>
+  <div id="mapa-container"></div>
+</div>
+
   </div>
 
   <footer>SHADOW SYSTEM — projeto pessoal de estudo. Use apenas em sistemas próprios ou autorizados.</footer>
