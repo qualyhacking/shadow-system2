@@ -356,6 +356,31 @@ _ADMIN_HTML = """
     </tr>
     {% endfor %}
   </table>
+  <h1 style="margin-top:30px;">&gt; CADASTRAR CLIENTE NOVO</h1>
+  <form method="POST" action="{{ url_for('admin_criar_cliente') }}" style="max-width:320px; margin-top:12px;">
+    <label style="font-size:13px;">Usuário</label><br>
+    <input type="text" name="usuario" required style="width:100%; background:#000; color:#33ff33; border:1px solid #1f5f1f; padding:8px; margin-top:4px; margin-bottom:10px;"><br>
+    <label style="font-size:13px;">Senha</label><br>
+    <input type="text" name="senha" required style="width:100%; background:#000; color:#33ff33; border:1px solid #1f5f1f; padding:8px; margin-top:4px; margin-bottom:10px;"><br>
+    <label style="font-size:13px;">Plano</label><br>
+    <select name="plano" style="width:100%; background:#000; color:#33ff33; border:1px solid #1f5f1f; padding:8px; margin-top:4px; margin-bottom:10px;">
+      {% for id, p in planos.items() %}
+      <option value="{{ id }}">{{ p.nome }} — R$ {{ p.preco }}</option>
+      {% endfor %}
+    </select><br>
+    <button type="submit" style="background:#0f2a0f; color:#33ff33; border:1px solid #1f5f1f; padding:10px; width:100%;">CRIAR ACESSO</button>
+  </form>
+
+  <h1 style="margin-top:30px;">&gt; CLIENTES CADASTRADOS</h1>
+  <table>
+    <tr><th>Usuário</th><th>Expira em</th></tr>
+    {% for u, dados in usuarios.items() %}
+    <tr>
+      <td>{{ u }}</td>
+      <td>{{ dados.expira_em.strftime('%d/%m/%Y %H:%M') if dados.expira_em else 'Nunca (admin)' }}</td>
+    </tr>
+    {% endfor %}
+  </table>
   <a class="voltar" href="{{ url_for('index') }}">&larr; Voltar ao painel</a>
 </body>
 </html>
