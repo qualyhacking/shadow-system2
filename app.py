@@ -25,11 +25,28 @@ app.secret_key = os.environ.get("SHADOW_SECRET_KEY", secrets.token_hex(32))
 SHADOW_USER = os.environ.get("SHADOW_USER", "admin")
 SHADOW_PASS = os.environ.get("SHADOW_PASS", "shadow123")
 
-# Usuário com permissão de ver/apagar sessões ativas (por padrão, o mesmo do login).
+# Usuário com permissão de administrar (ver sessões, criar clientes novos).
 SHADOW_ADMIN = os.environ.get("SHADOW_ADMIN", SHADOW_USER)
 
 # Registro de sessões ativas na memória do servidor.
 SESSIONS = {}
+
+# Cadastro de usuários (você = admin, sem expiração; clientes = com prazo).
+# ATENÇÃO: fica na memória do servidor — se o site reiniciar, essa lista
+# zera e volta só o admin. Ok para essa fase manual/teste do projeto.
+USUARIOS = {
+    SHADOW_USER: {"senha_hash": generate_password_hash(SHADOW_PASS), "expira_em": None}
+}
+
+PLANOS = {
+    "teste3": {"nome": "Teste 3 dias",      "dias": 3,  "preco": 50},
+    "dez":    {"nome": "10 dias",           "dias": 10, "preco": 20},
+    "quinze": {"nome": "15 dias",           "dias": 15, "preco": 25},
+    "vinte":  {"nome": "20 dias",           "dias": 20, "preco": 30},
+    "mes":    {"nome": "1 mês (30 dias)",   "dias": 30, "preco": 35},
+}
+
+WHATSAPP_NUMERO = "5588981785355"
 
 def login_required(view):
     @wraps(view)
@@ -54,7 +71,7 @@ def admin_required(view):
 
 @app.route("/", methods=["GET"])
 def index():
-    return render_template("index.html", logged_in=session.get("logged_in", False), erro=None)
+    return render_template("index.html", logged_in=session.get("logged_in", False), erro=None, planos=PLANOS, whatsapp=WHATSAPP_NUMERO)
 
 
 @app.route("/login", methods=["POST"])
@@ -62,24 +79,26 @@ def login():
     usuario = request.form.get("usuario", "")
     senha = request.form.get("senha", "")
 
-    usuario_ok = secrets.compare_digest(usuario, SHADOW_USER)
-    senha_ok = secrets.compare_digest(senha, SHADOW_PASS)
+    conta = USUARIOS.get(usuario)
 
-    if usuario_ok and senha_ok:
-        sid = secrets.token_hex(16)
-        agora = datetime.now().strftime("%d/%m %H:%M:%S")
-        SESSIONS[sid] = {
-            "usuario": usuario,
-            "ip": request.remote_addr,
-            "login_em": agora,
-            "ultimo_acesso": agora,
-        }
-        session["logged_in"] = True
-        session["usuario"] = usuario
-        session["sid"] = sid
-        return redirect(url_for("index"))
+    if not conta or not check_password_hash(conta["senha_hash"], senha):
+        return render_template("index.html", logged_in=False, erro="Usuário ou senha incorretos.", planos=PLANOS, whatsapp=WHATSAPP_NUMERO)
 
-    return render_template("index.html", logged_in=False, erro="Usuário ou senha incorretos.")
+    if conta["expira_em"] and datetime.now() > conta["expira_em"]:
+        return render_template("index.html", logged_in=False, erro="Seu acesso expirou. Fale com o suporte para renovar.", planos=PLANOS, whatsapp=WHATSAPP_NUMERO)
+
+    sid = secrets.token_hex(16)
+    agora = datetime.now().strftime("%d/%m %H:%M:%S")
+    SESSIONS[sid] = {
+        "usuario": usuario,
+        "ip": request.remote_addr,
+        "login_em": agora,
+        "ultimo_acesso": agora,
+    }
+    session["logged_in"] = True
+    session["usuario"] = usuario
+    session["sid"] = sid
+    return redirect(url_for("index"))
 
 
 @app.route("/logout")
