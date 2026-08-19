@@ -65,8 +65,17 @@ def login():
     senha_ok = secrets.compare_digest(senha, SHADOW_PASS)
 
     if usuario_ok and senha_ok:
+        sid = secrets.token_hex(16)
+        agora = datetime.now().strftime("%d/%m %H:%M:%S")
+        SESSIONS[sid] = {
+            "usuario": usuario,
+            "ip": request.remote_addr,
+            "login_em": agora,
+            "ultimo_acesso": agora,
+        }
         session["logged_in"] = True
         session["usuario"] = usuario
+        session["sid"] = sid
         return redirect(url_for("index"))
 
     return render_template("index.html", logged_in=False, erro="Usuário ou senha incorretos.")
