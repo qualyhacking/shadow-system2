@@ -24,6 +24,11 @@ app.secret_key = os.environ.get("SHADOW_SECRET_KEY", secrets.token_hex(32))
 SHADOW_USER = os.environ.get("SHADOW_USER", "admin")
 SHADOW_PASS = os.environ.get("SHADOW_PASS", "shadow123")
 
+# Usuário com permissão de ver/apagar sessões ativas (por padrão, o mesmo do login).
+SHADOW_ADMIN = os.environ.get("SHADOW_ADMIN", SHADOW_USER)
+
+# Registro de sessões ativas na memória do servidor.
+SESSIONS = {}
 
 def login_required(view):
     @wraps(view)
