@@ -5,11 +5,12 @@ import random
 import string
 import socket
 import secrets
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import wraps
 
 import requests
 from flask import Flask, render_template, render_template_string, request, redirect, url_for, session, jsonify
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
