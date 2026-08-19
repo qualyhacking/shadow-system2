@@ -442,17 +442,20 @@ def admin_criar_cliente():
 
     if not usuario or not senha or plano_id not in PLANOS:
         return "Dados inválidos.", 400
+
     if usuario in USUARIOS:
         return "Esse usuário já existe.", 400
 
-        dias = PLANOS[plano_id]["dias"]
+    dias = PLANOS[plano_id]["dias"]
+
     USUARIOS[usuario] = {
         "senha_hash": generate_password_hash(senha),
         "expira_em": datetime.now() + timedelta(days=dias),
     }
-    salvar_usuarios()
-    return redirect(url_for("admin_painel"))
 
+    salvar_usuarios()
+
+    return redirect(url_for("admin_painel"))
 
 if __name__ == "__main__":
     porta = int(os.environ.get("PORT", 5000))
