@@ -1,6 +1,7 @@
 import os
 import re
 import ast
+import json
 import random
 import string
 import socket
@@ -34,9 +35,42 @@ SESSIONS = {}
 # Cadastro de usuários (você = admin, sem expiração; clientes = com prazo).
 # ATENÇÃO: fica na memória do servidor — se o site reiniciar, essa lista
 # zera e volta só o admin. Ok para essa fase manual/teste do projeto.
-USUARIOS = {
-    SHADOW_USER: {"senha_hash": generate_password_hash(SHADOW_PASS), "expira_em": None}
-}
+CLIENTES_ARQUIVO = "clientes.json"
+
+
+def carregar_usuarios():
+    usuarios = {
+        SHADOW_USER: {"senha_hash": generate_password_hash(SHADOW_PASS), "expira_em": None}
+    }
+    if os.path.exists(CLIENTES_ARQUIVO):
+        try:
+            with open(CLIENTES_ARQUIVO, "r", encoding="utf-8") as f:
+                salvos = json.load(f)
+            for usuario, dados in salvos.items():
+                expira = dados.get("expira_em")
+                usuarios[usuario] = {
+                    "senha_hash": dados["senha_hash"],
+                    "expira_em": datetime.fromisoformat(expira) if expira else None,
+                }
+        except (json.JSONDecodeError, KeyError, ValueError):
+            pass
+    return usuarios
+
+
+def salvar_usuarios():
+    dados_para_salvar = {}
+    for usuario, dados in USUARIOS.items():
+        if usuario == SHADOW_USER:
+            continue
+        dados_para_salvar[usuario] = {
+            "senha_hash": dados["senha_hash"],
+            "expira_em": dados["expira_em"].isoformat() if dados["expira_em"] else None,
+        }
+    with open(CLIENTES_ARQUIVO, "w", encoding="utf-8") as f:
+        json.dump(dados_para_salvar, f)
+
+
+USUARIOS = carregar_usuarios()
 
 PLANOS = {
     "teste3": {"nome": "Teste 3 dias",      "dias": 3,  "preco": 50},
@@ -411,11 +445,12 @@ def admin_criar_cliente():
     if usuario in USUARIOS:
         return "Esse usuário já existe.", 400
 
-    dias = PLANOS[plano_id]["dias"]
+        dias = PLANOS[plano_id]["dias"]
     USUARIOS[usuario] = {
         "senha_hash": generate_password_hash(senha),
         "expira_em": datetime.now() + timedelta(days=dias),
     }
+    salvar_usuarios()
     return redirect(url_for("admin_painel"))
 
 
