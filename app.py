@@ -373,6 +373,25 @@ def admin_painel():
 def admin_revogar(sid):
     SESSIONS.pop(sid, None)
     return redirect(url_for("admin_painel"))
+    
+@app.route("/admin/criar-cliente", methods=["POST"])
+@admin_required
+def admin_criar_cliente():
+    usuario = request.form.get("usuario", "").strip()
+    senha = request.form.get("senha", "").strip()
+    plano_id = request.form.get("plano", "")
+
+    if not usuario or not senha or plano_id not in PLANOS:
+        return "Dados inválidos.", 400
+    if usuario in USUARIOS:
+        return "Esse usuário já existe.", 400
+
+    dias = PLANOS[plano_id]["dias"]
+    USUARIOS[usuario] = {
+        "senha_hash": generate_password_hash(senha),
+        "expira_em": datetime.now() + timedelta(days=dias),
+    }
+    return redirect(url_for("admin_painel"))
 
 
 if __name__ == "__main__":
