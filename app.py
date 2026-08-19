@@ -83,6 +83,7 @@ def login():
 
 @app.route("/logout")
 def logout():
+    SESSIONS.pop(session.get("sid"), None)
     session.clear()
     return redirect(url_for("index"))
 
