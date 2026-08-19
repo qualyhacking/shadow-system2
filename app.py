@@ -73,11 +73,11 @@ def salvar_usuarios():
 USUARIOS = carregar_usuarios()
 
 PLANOS = {
-    "teste3": {"nome": "Teste 3 dias",      "dias": 3,  "preco": 50},
-    "dez":    {"nome": "10 dias",           "dias": 10, "preco": 20},
-    "quinze": {"nome": "15 dias",           "dias": 15, "preco": 25},
-    "vinte":  {"nome": "20 dias",           "dias": 20, "preco": 30},
-    "mes":    {"nome": "1 mês (30 dias)",   "dias": 30, "preco": 35},
+    "teste3": {"nome": "Teste 3 dias",      "dias": 3,  "preco": 20},
+    "dez":    {"nome": "10 dias",           "dias": 10, "preco": 30},
+    "quinze": {"nome": "15 dias",           "dias": 15, "preco": 40},
+    "vinte":  {"nome": "20 dias",           "dias": 20, "preco": 45},
+    "mes":    {"nome": "1 mês (30 dias)",   "dias": 30, "preco": 50},
 }
 
 WHATSAPP_NUMERO = "5588981785355"
