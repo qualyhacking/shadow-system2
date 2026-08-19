@@ -390,7 +390,7 @@ _ADMIN_HTML = """
 @app.route("/admin")
 @admin_required
 def admin_painel():
-    return render_template_string(_ADMIN_HTML, sessoes=SESSIONS, sid_atual=session.get("sid"))
+    return render_template_string(_ADMIN_HTML, sessoes=SESSIONS, sid_atual=session.get("sid"), usuarios=USUARIOS, planos=PLANOS)
 
 
 @app.route("/admin/revogar/<sid>", methods=["POST"])
