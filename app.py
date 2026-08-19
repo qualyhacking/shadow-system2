@@ -299,6 +299,62 @@ def api_cnpj():
         "capital_social": info.get("capital_social"),
     })
 
+_ADMIN_HTML = """
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHADOW SYSTEM — ADMIN</title>
+<style>
+  body { background:#0a0a0a; color:#33ff33; font-family:"Courier New",monospace; margin:0; padding:16px; }
+  h1 { color:#0f0; text-shadow:0 0 6px #0f08; font-size:20px; }
+  table { width:100%; border-collapse: collapse; margin-top:16px; font-size:12.5px; }
+  th, td { border:1px solid #1f5f1f; padding:8px; text-align:left; word-break:break-word; }
+  th { background:#0f2a0f; }
+  tr.atual { background:#0f2a0f55; }
+  form { display:inline; }
+  button { background:#2a0f0f; color:#ff8888; border:1px solid #5f1f1f; border-radius:4px; padding:6px 10px; font-family:inherit; }
+  a.voltar { color:#7dff7d; text-decoration:none; display:inline-block; margin-top:16px; }
+</style>
+</head>
+<body>
+  <h1>&gt; PAINEL ADMIN — SESSÕES ATIVAS</h1>
+  <table>
+    <tr><th>Usuário</th><th>IP</th><th>Login em</th><th>Último acesso</th><th>Ação</th></tr>
+    {% for sid, dados in sessoes.items() %}
+    <tr class="{{ 'atual' if sid == sid_atual else '' }}">
+      <td>{{ dados.usuario }}{% if sid == sid_atual %} (você){% endif %}</td>
+      <td>{{ dados.ip }}</td>
+      <td>{{ dados.login_em }}</td>
+      <td>{{ dados.ultimo_acesso }}</td>
+      <td>
+        <form method="POST" action="{{ url_for('admin_revogar', sid=sid) }}" onsubmit="return confirm('Apagar esta sessão?');">
+          <button type="submit">APAGAR</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  <a class="voltar" href="{{ url_for('index') }}">&larr; Voltar ao painel</a>
+</body>
+</html>
+"""
+
+
+@app.route("/admin")
+@admin_required
+def admin_painel():
+    return render_template_string(_ADMIN_HTML, sessoes=SESSIONS, sid_atual=session.get("sid"))
+
+
+@app.route("/admin/revogar/<sid>", methods=["POST"])
+@admin_required
+def admin_revogar(sid):
+    SESSIONS.pop(sid, None)
+    return redirect(url_for("admin_painel"))
+
+
 if __name__ == "__main__":
     porta = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=porta, debug=False)
