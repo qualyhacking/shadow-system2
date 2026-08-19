@@ -33,8 +33,20 @@ SESSIONS = {}
 def login_required(view):
     @wraps(view)
     def wrapped(*args, **kwargs):
-        if not session.get("logged_in"):
+        sid = session.get("sid")
+        if not session.get("logged_in") or sid not in SESSIONS:
+            session.clear()
             return jsonify({"erro": "Não autenticado."}), 401
+        SESSIONS[sid]["ultimo_acesso"] = datetime.now().strftime("%d/%m %H:%M:%S")
+        return view(*args, **kwargs)
+    return wrapped
+
+
+def admin_required(view):
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+        if not session.get("logged_in") or session.get("usuario") != SHADOW_ADMIN:
+            return "Acesso negado.", 403
         return view(*args, **kwargs)
     return wrapped
 
