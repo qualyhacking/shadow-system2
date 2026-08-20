@@ -14,6 +14,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
+
+def obter_ip_real():
+    xff = request.headers.get("X-Forwarded-For", "")
+    if xff:
+        return xff.split(",")[0].strip()
+    return request.remote_addr
+
 # Chave de sessão do Flask. Em produção defina a variável de ambiente
 # SHADOW_SECRET_KEY. Se não existir, uma chave aleatória é gerada
 # (mas ela muda toda vez que o app reinicia, o que derruba sessões antigas).
@@ -138,10 +145,26 @@ def login():
         return render_template("index.html", logged_in=False, erro="Seu acesso expirou. Fale com o suporte para renovar.", planos=PLANOS, whatsapp=WHATSAPP_NUMERO)
 
     sid = secrets.token_hex(16)
+    sid = secrets.token_hex(16)
     agora = datetime.now().strftime("%d/%m %H:%M:%S")
+    ip_real = obter_ip_real()
+    dispositivo = request.headers.get("User-Agent", "Desconhecido")
+
+    localizacao = "Desconhecida"
+    try:
+        geo = requests.get(f"https://ipinfo.io/{ip_real}/json", timeout=4).json()
+        cidade = geo.get("city", "")
+        pais = geo.get("country", "")
+        if cidade or pais:
+            localizacao = f"{cidade or '?'} / {pais or '?'}"
+    except requests.RequestException:
+        pass
+
     SESSIONS[sid] = {
         "usuario": usuario,
-        "ip": request.remote_addr,
+        "ip": ip_real,
+        "localizacao": localizacao,
+        "dispositivo": dispositivo,
         "login_em": agora,
         "ultimo_acesso": agora,
     }
@@ -391,11 +414,13 @@ _ADMIN_HTML = """
 <body>
   <h1>&gt; PAINEL ADMIN — SESSÕES ATIVAS</h1>
   <table>
-    <tr><th>Usuário</th><th>IP</th><th>Login em</th><th>Último acesso</th><th>Ação</th></tr>
+    <tr><th>Usuário</th><th>IP</th><th>Local</th><th>Dispositivo</th><th>Login em</th><th>Último acesso</th><th>Ação</th></tr>
     {% for sid, dados in sessoes.items() %}
     <tr class="{{ 'atual' if sid == sid_atual else '' }}">
       <td>{{ dados.usuario }}{% if sid == sid_atual %} (você){% endif %}</td>
       <td>{{ dados.ip }}</td>
+      <td>{{ dados.localizacao }}</td>
+      <td style="font-size:10px;">{{ dados.dispositivo }}</td>
       <td>{{ dados.login_em }}</td>
       <td>{{ dados.ultimo_acesso }}</td>
       <td>
