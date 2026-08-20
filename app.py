@@ -145,7 +145,6 @@ def login():
         return render_template("index.html", logged_in=False, erro="Seu acesso expirou. Fale com o suporte para renovar.", planos=PLANOS, whatsapp=WHATSAPP_NUMERO)
 
     sid = secrets.token_hex(16)
-    sid = secrets.token_hex(16)
     agora = datetime.now().strftime("%d/%m %H:%M:%S")
     ip_real = obter_ip_real()
     dispositivo = request.headers.get("User-Agent", "Desconhecido")
