@@ -5,7 +5,7 @@ import random
 import string
 import socket
 import secrets
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from functools import wraps
 
 import requests
@@ -141,7 +141,7 @@ def login():
     if not conta or not check_password_hash(conta["senha_hash"], senha):
         return render_template("index.html", logged_in=False, erro="Usuário ou senha incorretos.", planos=PLANOS, whatsapp=WHATSAPP_NUMERO)
 
-    if conta["expira_em"] and datetime.now() > conta["expira_em"]:
+    if conta["expira_em"] and datetime.now(timezone.utc) > conta["expira_em"]:
         return render_template("index.html", logged_in=False, erro="Seu acesso expirou. Fale com o suporte para renovar.", planos=PLANOS, whatsapp=WHATSAPP_NUMERO)
 
     sid = secrets.token_hex(16)
