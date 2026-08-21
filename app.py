@@ -66,11 +66,16 @@ def carregar_usuarios():
             timeout=8,
         )
         resp.raise_for_status()
-        for linha in resp.json():
+                for linha in resp.json():
             expira = linha.get("expira_em")
+            expira_dt = None
+            if expira:
+                expira_dt = datetime.fromisoformat(expira)
+                if expira_dt.tzinfo is None:
+                    expira_dt = expira_dt.replace(tzinfo=timezone.utc)
             usuarios[linha["usuario"]] = {
                 "senha_hash": linha["senha_hash"],
-                "expira_em": datetime.fromisoformat(expira) if expira else None,
+                "expira_em": expira_dt,
             }
     except requests.RequestException:
         pass
@@ -488,7 +493,7 @@ def admin_criar_cliente():
 
     dias = PLANOS[plano_id]["dias"]
     senha_hash = generate_password_hash(senha)
-    expira_em = datetime.now() + timedelta(days=dias)
+    expira_em = datetime.now(timezone.utc) + timedelta(days=dias)
     USUARIOS[usuario] = {"senha_hash": senha_hash, "expira_em": expira_em}
     salvar_usuario_supabase(usuario, senha_hash, expira_em)
     return redirect(url_for("admin_painel"))
