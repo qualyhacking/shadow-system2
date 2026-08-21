@@ -66,7 +66,7 @@ def carregar_usuarios():
             timeout=8,
         )
         resp.raise_for_status()
-                for linha in resp.json():
+        for linha in resp.json():
             expira = linha.get("expira_em")
             expira_dt = None
             if expira:
@@ -80,7 +80,6 @@ def carregar_usuarios():
     except requests.RequestException:
         pass
     return usuarios
-
 
 def salvar_usuario_supabase(usuario, senha_hash, expira_em):
     if not SUPABASE_URL or not SUPABASE_KEY:
