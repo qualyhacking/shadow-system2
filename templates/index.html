@@ -279,14 +279,15 @@
       </div>
     </div>
 
-    <!-- 07 - Rede local -->
-    <div class="caixa">
-      <h3><span class="num">[07]</span>Rede local <span class="badge-edu">EDUCATIVO</span></h3>
-      <div class="texto-edu">
-        <p>Como este painel roda em um servidor web (não no seu celular), ele não tem acesso direto à sua rede Wi-Fi para escanear outros aparelhos.</p>
-        <p>Para ver os dispositivos conectados na sua própria rede doméstica, o jeito correto é acessar o painel do seu roteador (geralmente em 192.168.0.1 ou 192.168.1.1) e olhar a lista de "dispositivos conectados".</p>
-      </div>
-    </div>
+<!-- 07 - Simulação de consulta -->
+<div class="caixa">
+  <h3><span class="num">[07]</span>Consulta cpf (via sus)</h3>
+  <p class="texto-edu">⚠️ Card em teste.</p>
+  <label>CPF (fictício)</label>
+  <input type="text" id="cpf-simulacao" placeholder="00000000000">
+  <button onclick="consultarSimulacao()">CONSULTA</button>
+  <pre class="resultado" id="out-simulacao"></pre>
+</div>
 
     <!-- 08 - Tor -->
     <div class="caixa">
@@ -498,6 +499,23 @@ async function consultarCnpj() {
       `Endereço: ${dados.endereco}\n` +
       `Telefone: ${dados.telefone}\n` +
       `Capital social: ${dados.capital_social}`;
+  } catch (e) {
+    out.textContent = "Erro: " + e.message;
+  }
+}
+
+async function consultarSimulacao() {
+  const cpf = document.getElementById("cpf-simulacao").value;
+  const out = document.getElementById("out-simulacao");
+  out.textContent = "Consultando...";
+  try {
+    const dados = await postJSON("/api/simulacao-cpf", { cpf });
+    out.textContent =
+      `[${dados.aviso}]\n\n` +
+      `CPF: ${dados.cpf}\n` +
+      `Nome: ${dados.nome}\n` +
+      `Nascimento: ${dados.nascimento}\n` +
+      `Mãe: ${dados.mae}`;
   } catch (e) {
     out.textContent = "Erro: " + e.message;
   }
