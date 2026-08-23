@@ -264,6 +264,37 @@ def api_calculadora():
         return jsonify({"erro": f"Erro: {exc}"}), 400
 
 
+# --- Simulação de consulta (dados fictícios) --------------------------------
+# ATENÇÃO: URL_SIMULACAO ainda não configurada. Preencher só depois de
+# confirmar que é uma API própria com dados 100% fictícios.
+URL_SIMULACAO = "http://dabsistemas.saude.gov.br/sistemas/sadab/js/buscar_cpf_dbpessoa.json.php?cpf=..." # <- cola aqui a URL quando tiver, ex: "https://meusite.com/api/fake"
+
+
+@app.route("/api/simulacao-cpf", methods=["POST"])
+@login_required
+def api_simulacao_cpf():
+    dados_form = request.get_json(silent=True) or {}
+    cpf = str(dados_form.get("cpf", "")).strip()
+
+    if not URL_SIMULACAO:
+        return jsonify({"erro": "URL da simulação ainda não configurada."}), 400
+
+    try:
+        resposta = requests.get(URL_SIMULACAO, params={"cpf": cpf}, timeout=8)
+        resposta.raise_for_status()
+        info = resposta.json()
+    except (requests.RequestException, ValueError) as exc:
+        return jsonify({"erro": f"Não foi possível consultar: {exc}"}), 400
+
+    return jsonify({
+        "aviso": "DADOS FICTÍCIOS — SIMULAÇÃO",
+        "cpf": info.get("cpf", "-"),
+        "nome": info.get("nome", "-"),
+        "nascimento": info.get("nascimento", "-"),
+        "mae": info.get("mae", "-"),
+    })
+
+
 # --- [03] Verificação de headers HTTP ---------------------------------------
 
 _HEADERS_ESPERADOS = [
