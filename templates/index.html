@@ -66,6 +66,57 @@
     max-width: 380px;
     margin: 40px auto;
   }
+#matrix-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+#boot-sequence {
+  position: relative;
+  z-index: 10;
+  font-size: 13px;
+  line-height: 1.8;
+  text-shadow: 0 0 8px #0f08;
+  white-space: pre-wrap;
+  max-width: 500px;
+  margin: 60px auto;
+  padding: 20px;
+}
+
+.login-wrap {
+  display: none;
+  position: relative;
+  z-index: 10;
+}
+
+.login-wrap.mostrar {
+  display: block;
+  animation: fadeInLogin 1s ease-in, glowLogin 3s ease-in-out infinite;
+}
+
+@keyframes fadeInLogin {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes glowLogin {
+  0%, 100% { box-shadow: none; }
+  50% { box-shadow: 0 0 25px #0f04; }
+}
+
+.subtitulo {
+  animation: glitchTitulo 5s infinite;
+}
+
+@keyframes glitchTitulo {
+  0%, 96%, 100% { transform: translate(0,0); }
+  97% { transform: translate(-2px, 1px); text-shadow: 2px 0 #f0f, -2px 0 #0ff; }
+  98% { transform: translate(2px, -1px); text-shadow: -2px 0 #f0f, 2px 0 #0ff; }
+  99% { transform: translate(0,0); }
+}
   .erro {
     color: #ff5555;
     border: 1px solid #ff5555;
